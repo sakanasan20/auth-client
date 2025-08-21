@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人資料 - 認證客戶端</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #7c3aed;
+            --accent-color: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-color: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+        
+        .profile-container {
+            margin-top: 100px;
+            margin-bottom: 50px;
+        }
+        
+        .profile-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0 auto 1rem;
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+        }
+        
+        .profile-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile-email {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-value {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .badge-custom {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .btn-back {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+        
+        .token-section {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .token-text {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            word-break: break-all;
+            color: #666;
+        }
+        
+        .copy-btn {
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: #059bb8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt me-2"></i>
+                認證客戶端
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">首頁</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/profile">個人資料</a>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-sign-out-alt me-1"></i>登出
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Content -->
+    <div class="container profile-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="profile-card">
+                    <!-- Profile Header -->
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h1 class="profile-name" th:text="${user.name}">用戶名稱</h1>
+                        <p class="profile-email" th:text="${user.email}">user@example.com</p>
+                        <span class="badge-custom">
+                            <i class="fas fa-check-circle me-1"></i>
+                            已驗證用戶
+                        </span>
+                    </div>
+
+                    <!-- User Information -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-section">
+                                <div class="info-label">
+                                    <i class="fas fa-user me-2"></i>
+                                    用戶名稱
+                                </div>
+                                <div class="info-value" th:text="${user.name}">用戶名稱</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="info-section">
+                                <div class="info-label">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    電子郵件
+                                </div>
+                                <div class="info-value" th:text="${user.email}">user@example.com</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="info-section">
+                                <div class="info-label">
+                                    <i class="fas fa-id-card me-2"></i>
+                                    用戶 ID
+                                </div>
+                                <div class="info-value" th:text="${user.subject}">用戶 ID</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="info-section">
+                                <div class="info-label">
+                                    <i class="fas fa-calendar me-2"></i>
+                                    登入時間
+                                </div>
+                                <div class="info-value" th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">登入時間</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Claims Information -->
+                    <div class="info-section">
+                        <div class="info-label">
+                            <i class="fas fa-list me-2"></i>
+                            用戶聲明 (Claims)
+                        </div>
+                        <div class="token-section">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">OpenID Connect Claims</small>
+                                <button class="copy-btn" onclick="copyClaims()">
+                                    <i class="fas fa-copy me-1"></i>複製
+                                </button>
+                            </div>
+                            <div class="token-text" id="claimsText" th:if="${claimsMap != null and !claimsMap.isEmpty()}">
+                                <div th:each="claim : ${claimsMap}">
+                                    <strong th:text="${claim.key}">Key</strong>: <span th:text="${claim.value}">Value</span><br>
+                                </div>
+                            </div>
+                            <div class="token-text" id="claimsText" th:if="${claimsMap == null or claimsMap.isEmpty()}">無法獲取用戶聲明</div>
+                        </div>
+                    </div>
+
+                    <!-- Access Token -->
+                    <div class="info-section">
+                        <div class="info-label">
+                            <i class="fas fa-key me-2"></i>
+                            存取令牌 (Access Token)
+                        </div>
+                        <div class="token-section">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">JWT Token</small>
+                                <button class="copy-btn" onclick="copyToken()">
+                                    <i class="fas fa-copy me-1"></i>複製
+                                </button>
+                            </div>
+                            <div class="token-text" id="tokenText" th:text="${idTokenValue}">存取令牌</div>
+                        </div>
+                    </div>
+
+                    <!-- Back Button -->
+                    <div class="text-center mt-4">
+                        <a href="/" class="btn btn-back">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            返回首頁
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function copyClaims() {
+            const claimsText = document.getElementById('claimsText').textContent;
+            navigator.clipboard.writeText(claimsText).then(() => {
+                showToast('Claims 已複製到剪貼簿');
+            });
+        }
+        
+        function copyToken() {
+            const tokenText = document.getElementById('tokenText').textContent;
+            navigator.clipboard.writeText(tokenText).then(() => {
+                showToast('Token 已複製到剪貼簿');
+            });
+        }
+        
+        function showToast(message) {
+            // 創建一個簡單的 toast 通知
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10b981;
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                z-index: 1000;
+                font-weight: 600;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
