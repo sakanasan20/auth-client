@@ -55,4 +55,20 @@ public class HomeController {
         }
         return "redirect:/";
     }
+    
+    @GetMapping("/logout-success")
+    public String logoutSuccess(Model model) {
+        model.addAttribute("logoutMessage", "您已成功登出");
+        model.addAttribute("logoutTime", java.time.LocalDateTime.now());
+        return "logout-success";
+    }
+    
+    @GetMapping("/logout-confirm")
+    public String logoutConfirm(@AuthenticationPrincipal OidcUser oidcUser, Model model) {
+        if (oidcUser != null) {
+            model.addAttribute("user", oidcUser);
+            return "logout-confirm";
+        }
+        return "redirect:/";
+    }
 }

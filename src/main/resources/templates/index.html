@@ -195,11 +195,9 @@
                         </a>
                     </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <form th:action="@{/logout}" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-outline-danger btn-sm">
-                                <i class="fas fa-sign-out-alt me-1"></i>登出
-                            </button>
-                        </form>
+                        <a href="/logout-confirm" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-sign-out-alt me-1"></i>登出
+                        </a>
                     </li>
                 </ul>
             </div>
