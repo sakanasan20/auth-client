@@ -20,7 +20,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/login**", "/logout-success").permitAll()
+                .requestMatchers("/", "/login**", "/logout-success", "/auth-error").permitAll()
                 .requestMatchers("/logout-confirm").authenticated()
                 .anyRequest().authenticated()
             )
@@ -29,6 +29,15 @@ public class SecurityConfig {
                 .authorizationEndpoint(authorization -> authorization
                     .authorizationRequestRepository(cookieAuthorizationRequestRepository())
                 )
+                // 設定自訂的失敗處理器
+                .failureHandler((request, response, exception) -> {
+                    // 將 OAuth2 錯誤重定向到自訂錯誤頁面
+                    String error = "login_failed";
+                    if (exception.getMessage().contains("access_denied")) {
+                        error = "access_denied";
+                    }
+                    response.sendRedirect("/auth-error?error=" + error);
+                })
             )
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
